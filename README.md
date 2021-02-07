@@ -55,7 +55,3 @@ Project Organization
 --------
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
-
-Prerequisites
-------------
-From the root of the repository run `pip install -r requirements.txt`.
