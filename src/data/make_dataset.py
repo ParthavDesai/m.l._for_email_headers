@@ -8,8 +8,10 @@ from pathlib import Path
 from dotenv import find_dotenv, load_dotenv
 
 logger = logging.getLogger(__name__)
+df = pd.DataFrame(columns=['Header', 'Label'])
 
-def addFileToDf(df, file_path, label):
+def addFileToDf(file_path, label):
+    global df
     with open(file_path, encoding='us-ascii') as txt:
         try:
             header = txt.readline()
@@ -18,7 +20,8 @@ def addFileToDf(df, file_path, label):
             df.loc[-1] = [header, label]
             df.index = df.index + 1
             df = df.sort_index()
-        except:
+        except Exception as e:
+            print(e)
             logger.info(f'{file_path} was excluded from csv due to binary encoding')
 
 @click.command()
@@ -28,6 +31,7 @@ def main(input_path, output_path):
     """ Runs data processing scripts to turn raw data from (../raw) into
         cleaned data ready to be analyzed (saved in ../processed).
     """
+    global df
     logger.info('making final data set from raw data')
     
     external_path = 'data/external'
@@ -41,13 +45,12 @@ def main(input_path, output_path):
 
     if not path.exists(interim_path):
         logger.info(f'converting external txt files to enron.csv in {interim_path}')
-        df = pd.DataFrame(columns=['Header', 'Label'])
         mkdir(interim_path)
         for enron in listdir(external_path):
             for ham in listdir(f'{external_path}/{enron}/ham'):
-                addFileToDf(df, f'{external_path}/{enron}/ham/{ham}', 0)
+                addFileToDf(f'{external_path}/{enron}/ham/{ham}', 0)
             for spam in listdir(f'{external_path}/{enron}/spam'):
-                addFileToDf(df, f'{external_path}/{enron}/spam/{spam}', 1)
+                addFileToDf(f'{external_path}/{enron}/spam/{spam}', 1)
         df.to_csv(f'{interim_path}/enron.csv', index=False)
 
 if __name__ == '__main__':
