@@ -20,9 +20,8 @@ def addFileToDf(file_path, label):
             df.loc[-1] = [header, label]
             df.index = df.index + 1
             df = df.sort_index()
-        except Exception as e:
-            print(e)
-            logger.info(f'{file_path} was excluded from csv due to binary encoding')
+        except:
+            pass
 
 @click.command()
 @click.argument('input_path', type=click.Path(exists=True))
