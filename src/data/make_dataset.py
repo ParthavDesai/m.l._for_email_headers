@@ -3,25 +3,39 @@ import click
 import logging
 import pandas as pd
 import shutil
+import re
 from os import listdir, mkdir, path
 from pathlib import Path
 from dotenv import find_dotenv, load_dotenv
 
 logger = logging.getLogger(__name__)
-df = pd.DataFrame(columns=['Header', 'Label'])
+columns = ['Return-Path', 'Message-ID', 'From', 'Reply-To', 'To', 'Subject', 'Date', 'X-Mailer', 'Content-Type', 'Content-Length', 'Content-Transfer-Encoding', 'Label']
+df = pd.DataFrame(columns=columns)
 
-def addFileToDf(file_path, label):
+def addEmailToDf(file_path):
     global df
-    with open(file_path, encoding='us-ascii') as txt:
-        try:
-            header = txt.readline()
-            header = header.replace('Subject: ','',1)
-            header = header.replace(' re : ','',1)
-            df.loc[-1] = [header, label]
+    
+    index_path = 'data/raw/trec07p/full/index'
+    mail_id = file_path.split('.')[1]
+    header = dict.fromkeys(columns)
+
+    label = 0
+    with open(index_path, encoding='us-ascii') as index:
+        for i, line in enumerate(index):
+            if i == int(mail_id) - 1 and line[0:4] == 'spam':
+                label = 1 
+    try:
+        with open(file_path, encoding='us-ascii') as email:
+            for line in email:
+                split_line = line.split(':')
+                value = split_line[0]
+                if value in header:
+                    header[value] = split_line[1]           
+            df.loc[-1] = [header['Return-Path'], header['Message-ID'], header['From'], header['Reply-To'], header['To'], header['Subject'], header['Date'], header['X-Mailer'], header['Content-Type'], header['Content-Length'], header['Content-Transfer-Encoding'], label]
             df.index = df.index + 1
             df = df.sort_index()
-        except:
-            pass
+    except UnicodeDecodeError:
+        pass
 
 @click.command()
 @click.argument('input_path', type=click.Path(exists=True))
@@ -33,24 +47,14 @@ def main(input_path, output_path):
     global df
     logger.info('making final data set from raw data')
     
-    external_path = 'data/external'
     interim_path = 'data/interim'
     
-    if not path.exists(external_path):
-        logger.info(f'extracting raw data to {external_path}') 
-        mkdir(external_path)
-        for tar in listdir(input_path):
-            shutil.unpack_archive(f'{input_path}/{tar}', external_path)
-
     if not path.exists(interim_path):
-        logger.info(f'converting external txt files to enron.csv in {interim_path}')
+        logger.info(f'converting external txt files to trec07.csv in {interim_path}')
         mkdir(interim_path)
-        for enron in listdir(external_path):
-            for ham in listdir(f'{external_path}/{enron}/ham'):
-                addFileToDf(f'{external_path}/{enron}/ham/{ham}', 0)
-            for spam in listdir(f'{external_path}/{enron}/spam'):
-                addFileToDf(f'{external_path}/{enron}/spam/{spam}', 1)
-        df.to_csv(f'{interim_path}/enron.csv', index=False)
+        for email in listdir(f'{input_path}/trec07p/data'):
+            addEmailToDf(f'{input_path}/trec07p/data/{email}')
+        df.to_csv(f'{interim_path}/trec07.csv', index=False)
 
 if __name__ == '__main__':
     log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
