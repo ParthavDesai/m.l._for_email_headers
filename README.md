@@ -1,6 +1,13 @@
 M.L. For Email Headers
 ==============================
 
+Prerequisite
+------------
+Dowload TREC07 Dataset here:
+https://plg.uwaterloo.ca/~gvcormac/treccorpus07/about.html
+
+Unpack and move to `data/raw`.
+
 Using machine learning to classify emails as spam or ham by looking at email headers.
 
 Project Organization
