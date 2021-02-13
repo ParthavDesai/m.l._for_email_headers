@@ -9,7 +9,7 @@ from pathlib import Path
 from dotenv import find_dotenv, load_dotenv
 
 logger = logging.getLogger(__name__)
-columns = ['Return-Path', 'Message-ID', 'From', 'Reply-To', 'To', 'Subject', 'Date', 'X-Mailer', 'Content-Type', 'Content-Length', 'Content-Transfer-Encoding', 'Label']
+columns = ['Return-Path', 'Message-ID', 'From', 'Reply-To', 'To', 'Subject', 'Date', 'X-Mailer', 'MIME-Version', 'Content-Type', 'X-Priority', 'X-MSMail-Priority', 'Status', 'Content-Length', 'Content-Transfer-Encoding', 'Lines', 'Label']
 df = pd.DataFrame(columns=columns)
 
 def addEmailToDf(file_path):
@@ -31,7 +31,7 @@ def addEmailToDf(file_path):
                 value = split_line[0]
                 if value in header:
                     header[value] = split_line[1]           
-            df.loc[-1] = [header['Return-Path'], header['Message-ID'], header['From'], header['Reply-To'], header['To'], header['Subject'], header['Date'], header['X-Mailer'], header['Content-Type'], header['Content-Length'], header['Content-Transfer-Encoding'], label]
+            df.loc[-1] = [header['Return-Path'], header['Message-ID'], header['From'], header['Reply-To'], header['To'], header['Subject'], header['Date'], header['X-Mailer'], header['MIME-Version'], header['Content-Type'], header['X-Priority'], header['X-MSMail-Priority'], header['Status'], header['Content-Length'], header['Content-Transfer-Encoding'], header['Lines'], label]
             df.index = df.index + 1
             df = df.sort_index()
     except UnicodeDecodeError:
@@ -48,12 +48,15 @@ def main(input_path, output_path):
     logger.info('making final data set from raw data')
     
     interim_path = 'data/interim'
-    
+    count = 0
     if not path.exists(interim_path):
         logger.info(f'converting external txt files to trec07.csv in {interim_path}')
         mkdir(interim_path)
         for email in listdir(f'{input_path}/trec07p/data'):
             addEmailToDf(f'{input_path}/trec07p/data/{email}')
+            count += 1
+            if count % 1000 == 0:
+                logger.info(f'conversion done for {count}/75000 files')
         df.to_csv(f'{interim_path}/trec07.csv', index=False)
 
 if __name__ == '__main__':
