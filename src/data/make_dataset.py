@@ -9,7 +9,7 @@ from pathlib import Path
 from dotenv import find_dotenv, load_dotenv
 
 logger = logging.getLogger(__name__)
-columns = ['Return-Path', 'Message-ID', 'From', 'Reply-To', 'To', 'Subject', 'Date', 'X-Mailer', 'MIME-Version', 'Content-Type', 'X-Priority', 'X-MSMail-Priority', 'Status', 'Content-Length', 'Content-Transfer-Encoding', 'Lines', 'Label']
+columns = ['Return-Path', 'Message-ID', 'From', 'Reply-To', 'To', 'Submitting Host', 'Subject', 'Date', 'X-Mailer', 'MIME-Version', 'Content-Type', 'X-Priority', 'X-MSMail-Priority', 'Status', 'Content-Length', 'Content-Transfer-Encoding', 'Lines', 'Label', 'hops']
 
 def getIndexMap(index_path, data_path):
     
@@ -30,19 +30,25 @@ def addEmailToDf(file_path, index, df):
     
     header = dict.fromkeys(columns)
     label = index[file_path]
+    hops = 0
+    host = None
 
     try:
         with open(file_path, encoding='us-ascii') as email:
             for line in email:
                 split_line = line.split(':')
                 value = split_line[0]
+                if value == 'Received' and split_line[1][1:5] == 'from':
+                    host = split_line[1].split('from ')[1][:-1]
+                    hops += 1 
                 if value in header:
                     header[value] = split_line[1]           
             df.loc[-1] = [header['Return-Path'], 
                           header['Message-ID'], 
                           header['From'], 
                           header['Reply-To'], 
-                          header['To'], 
+                          header['To'],
+                          host, 
                           header['Subject'], 
                           header['Date'], 
                           header['X-Mailer'], 
@@ -53,8 +59,9 @@ def addEmailToDf(file_path, index, df):
                           header['Status'], 
                           header['Content-Length'], 
                           header['Content-Transfer-Encoding'], 
-                          header['Lines'], 
-                          label]
+                          header['Lines'],
+                          label,
+                          hops]
             df.index = df.index + 1
             df = df.sort_index()
     except UnicodeDecodeError:
