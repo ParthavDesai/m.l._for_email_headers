@@ -9,3 +9,6 @@ awscli
 flake8
 pandas==1.2.1
 python-dotenv>=0.5.1
+validators
+spam-lists
+re
