@@ -120,7 +120,7 @@ def gbt_model():
 
 def rnn_model():
     
-    rnn_filepath = '../../models/rnn_model.py'
+    rnn_filepath = '../../models/rnn_model.pickle'
     data_filepath = '../../data/interim/data_with_features.csv'
     
     print('Preparing training data for RNN model...')
@@ -129,8 +129,8 @@ def rnn_model():
     rnn_df = rnn_df.drop(['Return-Path','Message-ID','From','Reply-To','To','Submitting Host','Subject','Date','X-Mailer','MIME-Version','Content-Type','X-Priority','X-MSMail-Priority','Status','Content-Length','Content-Transfer-Encoding','Lines'], axis = 1)
 
     # split data into testing and training
-    train_size = int(len(rnn_df) * 0.7)
-    train_data = rnn_df.iloc[:-train_size,:].copy()
+    test_size = int(len(rnn_df) * 0.3)
+    train_data = rnn_df.iloc[:-test_size,:].copy()
 
     # split training data into labels and features
     features_train = train_data.drop('Label',axis=1).copy()
@@ -169,11 +169,11 @@ def rnn_model():
     
     # train model
     print('Training RNN model...')
-    model.fit_generator(generator,epochs=50)
+    model = model.fit_generator(generator,epochs=50)
 
     # save model
-    with open(rnn_filepath, 'w+') as model_file:
-        pickle.dump(model, model_file)
+    with open(rnn_filepath, 'wb+') as model_file:
+        pickle.dump(model.history, model_file)
     
     print(f'RNN model saved to {rnn_filepath}.')
 
