@@ -13,3 +13,7 @@ python-dotenv>=0.5.1
 validators
 spam-lists
 re
+pyspf
+checkdmarc
+spam_lists
+dnspython
