@@ -118,6 +118,9 @@ def gbt_model():
                                                         round(recall, 3),
                                                         round((y_pred==y_test).sum() / len(y_pred),3)))
 
+'''
+Trains and Saves Recurrent Neural Network Model
+'''
 def rnn_model():
     
     rnn_filepath = '../../models/rnn_model.pickle'
