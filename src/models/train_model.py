@@ -1,5 +1,5 @@
 '''
-Authors: Parthav Desai, Josh Erviho, Daria Patroucheva, Annie Xi
+Authors: Parthav Desai, Josh Erviho, Daria Patroucheva, Annie Xu
 '''
 
 import numpy as np
@@ -180,12 +180,80 @@ def rnn_model():
     
     print(f'RNN model saved to {rnn_filepath}.')
 
+'''
+Trains and Saves Convolutional Neural Network Model
+'''
+def cnn_model():
+    
+    cnn_filepath = '../../models/cnn_model.pickle'
+    data_filepath = '../../data/interim/data_with_features.csv'
+    
+    print('Preparing training data for CNN model...')
+
+    cnn_df = pd.read_csv(data_filepath, dtype='unicode')
+    cnn_df = cnn_df.drop(['Return-Path','Message-ID','From','Reply-To','To','Submitting Host','Subject','Date','X-Mailer','MIME-Version','Content-Type','X-Priority','X-MSMail-Priority','Status','Content-Length','Content-Transfer-Encoding','Lines'], axis = 1)
+
+    # split data into testing and training
+    test_size = int(len(rnn_df) * 0.3)
+    train_data = rnn_df.iloc[:-test_size,:].copy()
+    test_data = cnn_df.iloc[-test_size:,:].copy()
+    
+    # split training data into labels and features
+    features_train = train_data.drop('Label',axis=1).copy()
+    label_train = train_data[['Label']].copy()
+
+    # convert df to numpy arrays
+    feature_scaler = MinMaxScaler(feature_range=(0, 1))
+    feature_scaler.fit(features_train)
+    scaled_feature_train = feature_scaler.transform(features_train)
+    label_scaler = MinMaxScaler(feature_range=(0, 1))
+    label_scaler.fit(label_train)
+    scaled_label_train = label_scaler.transform(label_train)
+    scaled_label_train = scaled_label_train.reshape(-1)
+    scaled_label_train = np.insert(scaled_label_train, 0, 0)
+    scaled_label_train = np.delete(scaled_label_train, -1)
+
+    # merge feature and label arrays
+    n_input, b_size = 25, 32 
+    n_features= features_train.shape[1]
+    generator = TimeseriesGenerator(scaled_feature_train, scaled_label_train, length=n_input, batch_size=b_size)
+    
+    # instantiate sequential model
+    print('Instantiating CNN Model...')
+
+    model = Sequential()
+    model.add(Conv1D(128, input_shape=(n_input, n_features), kernel_size=5))
+    model.add(Activation('relu'))
+    model.add(MaxPooling1D(pool_size=1))
+
+    model.add(Conv1D(128,kernel_size=5))
+    model.add(Activation('relu'))
+    model.add(MaxPooling1D(pool_size=1))
+
+    model.add(Flatten())  # this converts to 1D feature vectors
+
+    model.add(Dense(64))
+    model.add(Dense(1, activation='sigmoid'))
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+    print(model.summary())
+    
+    # train model
+    print('Training RNN model...')
+    model = model.fit_generator(generator,epochs=50)
+
+    # save model
+    with open(cnn_filepath, 'wb+') as model_file:
+        pickle.dump(model.history, model_file)
+    
+    print(f'CNN model saved to {cnn_filepath}.')
 
 def main():
     rfm_model()
     svc_model()
     gbt_model()
     rnn_model()
+    cnn_model()
 
 if __name__ == "__main__":
     main()
