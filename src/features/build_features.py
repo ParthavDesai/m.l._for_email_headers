@@ -12,7 +12,7 @@ import checkdmarc
     as well as getting rid of duplicate data
 '''
 def preprocessing():
-    df = pd.read_csv(r'../data/interim/trec07.csv',dtype='unicode')
+    df = pd.read_csv(r'../../data/interim/trec07.csv',dtype='unicode')
     cols_for_unknown = ['Return-Path','Message-ID',"From","Reply-To","To","Subject","Date","X-Mailer","Content-Type","Content-Transfer-Encoding"]
     cols_for_zero = ["MIME-Version","X-Priority","X-MSMail-Priority","Status","Content-Length","Lines"]
 
@@ -26,7 +26,8 @@ def preprocessing():
     df = df.replace("re :","",regex = True)
     df['new_email'] = df['From'].str.extract(r'([\w\.-]+@[\w\.-]+)')
     df['domain'] = df['new_email'].apply(str).str.split('@').str[1]
-    df.to_csv(r'../data/interim/preprocessed.csv')
+    
+    df.to_csv(r'../../data/interim/preprocessed.csv')
 '''
     Methods for creating new features
 '''
@@ -189,7 +190,7 @@ def feature_gen():
     df['new_date'] = pd.to_datetime(df['Date'],errors="coerce")
     df['validate_date'] = np.where(df['new_date']< datetime.now(), 1, 0)
     df['Subject_length']  = df['Subject'].str.len()
-    df.to_csv(r'../data/interim/data_with_features.csv',index=False)
+    df.to_csv(r'../../data/interim/data_with_features.csv',index=False)
 
 def main():
     print('Starting Preprocessing')
