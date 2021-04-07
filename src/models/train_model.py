@@ -129,7 +129,7 @@ def rnn_model():
     print('Preparing training data for RNN model...')
 
     rnn_df = pd.read_csv(data_filepath, dtype='unicode')
-    rnn_df = rnn_df.drop(['Return-Path','Message-ID','From','Reply-To','To','Submitting Host','Subject','Date','X-Mailer','MIME-Version','Content-Type','X-Priority','X-MSMail-Priority','Status','Content-Length','Content-Transfer-Encoding','Lines'], axis = 1)
+    rnn_df = rnn_df.drop(['new_email', 'domain', 'new_date', 'Return-Path','Message-ID','From','Reply-To','To','Submitting Host','Subject','Date','X-Mailer','MIME-Version','Content-Type','X-Priority','X-MSMail-Priority','Status','Content-Length','Content-Transfer-Encoding','Lines'], axis = 1)
 
     # split data into testing and training
     test_size = int(len(rnn_df) * 0.3)
