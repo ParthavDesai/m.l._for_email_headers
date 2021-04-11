@@ -41,6 +41,7 @@ from tensorflow.keras.preprocessing.sequence import TimeseriesGenerator
     Generating results for Random forest Model
 '''
 def rfm_model():
+    filepath = '../../models/rfm_model.pickle'
     train = pd.read_csv(r'../../data/interim/data_with_features.csv',dtype='unicode')
 
     # training data without labels
@@ -56,6 +57,7 @@ def rfm_model():
 
     rf = RandomForestClassifier(n_estimators=50, max_depth=20, n_jobs=-1)
     rf_model = rf.fit(X_train, y_train)
+    pickle.dump(rf_model, open(filepath, 'wb')) #saving the model to pickle
     y_pred = rf_model.predict(X_test)
     precision, recall, fscore, support = score(y_test, y_pred, pos_label='1', average='binary')
     print(confusion_matrix(y_test, y_pred))
@@ -68,6 +70,7 @@ def rfm_model():
     Generating results for Support Vector Classifier Model
 '''
 def svc_model():
+    filepath = '../../models/svc_model.pickle'
     train = pd.read_csv(r'../../data/interim/data_with_features.csv',dtype='unicode')
 
     # training data without labels
@@ -83,6 +86,7 @@ def svc_model():
     from sklearn.svm import SVC
     svclassifier = SVC()
     svclassifer_model = svclassifier.fit(X_train, y_train)
+    pickle.dump(svclassifer_model, open(filepath, 'wb'))#saving the model to pickle
     y_pred = svclassifer_model.predict(X_test)
     precision, recall, fscore, support = score(y_test, y_pred, pos_label='1', average='binary')
     print(confusion_matrix(y_test, y_pred))
@@ -95,6 +99,7 @@ def svc_model():
 Generating results for Gradient Boosted Tree model
 '''
 def gbt_model():
+    filepath = '../../models/gbt_model.pickle'
     # original training data
     train = pd.read_csv(r'../../data/interim/data_with_features.csv',dtype='unicode')
 
@@ -109,6 +114,7 @@ def gbt_model():
     X_train, X_test, y_train, y_test = train_test_split(t, train['Label'], test_size=0.3)
     gbt = GradientBoostingClassifier(n_estimators=50, learning_rate = 0.2, max_depth=20, max_features=2)
     gbt_model = gbt.fit(X_train, y_train)
+    pickle.dump(gbt_model, open(filepath, 'wb'))#saving the model to pickle
     y_pred = gbt_model.predict(X_test)
     precision, recall, fscore, support = score(y_test, y_pred, pos_label='1', average='binary')
     print(confusion_matrix(y_test, y_pred))
@@ -117,6 +123,7 @@ def gbt_model():
     print('Metric for Gradient Boosted Tree: Precision: {} | Recall: {} | Accuracy: {}'.format(round(precision, 3),
                                                         round(recall, 3),
                                                         round((y_pred==y_test).sum() / len(y_pred),3)))
+    
 
 '''
 Trains and Saves Recurrent Neural Network Model
@@ -183,6 +190,7 @@ def rnn_model():
 '''
 Trains and Saves Convolutional Neural Network Model
 '''
+'''
 def cnn_model():
     
     cnn_filepath = '../../models/cnn_model.pickle'
@@ -247,13 +255,13 @@ def cnn_model():
         pickle.dump(model.history, model_file)
     
     print(f'CNN model saved to {cnn_filepath}.')
-
+'''
 def main():
     rfm_model()
     svc_model()
     gbt_model()
-    rnn_model()
-    cnn_model()
+    #rnn_model()
+    #cnn_model()
 
 if __name__ == "__main__":
     main()
