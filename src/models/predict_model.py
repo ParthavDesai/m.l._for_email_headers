@@ -68,23 +68,28 @@ def supervised_models():
     gbt_load_model = pickle.load(open(gbt_filepath, 'rb')) 
     
 
-    rfm_load_model.predict(features) 
-    svc_load_model.predict(features)
-    gbt_load_model.predict(features)
+    rfm_prediction = rfm_load_model.predict(features) 
+    svc_prediction = svc_load_model.predict(features)
+    gbt_prediction = gbt_load_model.predict(features)
+    print('rfm:'+rfm_prediction)
+    print('gbt:'+gbt_prediction)
+    print('gbt:'+gbt_prediction)
+    
 def rnn_model():
     rnn_filepath = '../../models/rnn_model.pkl'
-    cnn_scaler_filepath = '../../data/interim/cnn_scaler.pkl'
+    cnn_scaler_filepath = '../../models/cnn_scaler.pkl'
     test_dataset = pd.read_csv(r'../../data/feature_gen_pred_data.csv')
     #this part dnt know about
     rnn_df = rnn_df.drop(['new_email', 'domain', 'new_date', 'Return-Path','Message-ID','From','Reply-To','To','Submitting Host','Subject','Date','X-Mailer','MIME-Version','Content-Type','X-Priority','X-MSMail-Priority','Status','Content-Length','Content-Transfer-Encoding','Lines'], axis = 1)
     rnn_scaler = pickle.load(open('rnn_scaler.pkl','rb'))
     rnn_load_model = pickle.load(open(rnn_filepath, 'rb'))
     test_scaled = rnn_scaler.transform(test_dataset)
-    rnn_load_model.predict(test_scaled)
+    prediction_value = rnn_load_model.predict(test_scaled)
+    print(prediction_value)
 
 def cnn_model():
     cnn_filepath = '../../models/cnn_model.pickle'
-    cnn_scaler_filepath = '../../data/interim/cnn_scaler.pkl'
+    cnn_scaler_filepath = '../../models/cnn_scaler.pkl'
     test_dataset = pd.read_csv(r'../../data/feature_gen_pred_data.csv')
     #not sure about this part
     cnn_df = cnn_df.drop(['Return-Path','Message-ID','From','Reply-To','To','Submitting Host','Subject','Date','X-Mailer','MIME-Version','Content-Type','X-Priority','X-MSMail-Priority','Status','Content-Length','Content-Transfer-Encoding','Lines'], axis = 1)
@@ -92,7 +97,8 @@ def cnn_model():
     rnn_scaler = pickle.load(open('cnn_scaler.pkl','rb'))
     rnn_load_model = pickle.load(open(cnn_filepath, 'rb'))
     test_scaled = rnn_scaler.transform(test_dataset)
-    rnn_load_model.predict(test_scaled)
+    prediction_val = rnn_load_model.predict(test_scaled)
+    print(prediction_val)
 
 
 def main():
