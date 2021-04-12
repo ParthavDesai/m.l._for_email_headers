@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 '''
 Authors: Parthav Desai, Josh Erviho, Daria Patroucheva, Annie Xu
 '''
@@ -38,9 +37,12 @@ from tensorflow.keras.layers import Activation, Dense, Dropout, LSTM
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.preprocessing.sequence import TimeseriesGenerator
 from keras.layers import Dense, Dropout, Activation, Input, BatchNormalization, MaxPooling1D, Bidirectional,LSTM
+
+#CNN Imports
 from keras.layers import Conv1D, GlobalMaxPooling1D, MaxPool1D, Flatten , Embedding, GlobalMaxPool1D
 from keras.models import Model
 from keras.wrappers.scikit_learn import KerasClassifier
+
 '''
     Generating results for Random forest Model
 '''
