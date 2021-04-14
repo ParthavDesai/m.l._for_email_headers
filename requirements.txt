@@ -10,3 +10,8 @@ awscli
 flake8
 pandas==1.2.1
 python-dotenv>=0.5.1
+
+
+
+
+## In order to install the requirements, "pip install -r requirements.txt" in your terminal.
