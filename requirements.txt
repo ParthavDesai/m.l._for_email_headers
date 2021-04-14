@@ -10,8 +10,9 @@ flake8==3.8.4
 keras==2.4.3
 pandas==1.2.1
 python-dotenv==0.5.1
+scipy==1.4.1
 Sphinx==1.8.2
-
+tensorflow==2.2
 
 
 ## In order to install the requirements, "pip install -r requirements.txt" in your terminal.
