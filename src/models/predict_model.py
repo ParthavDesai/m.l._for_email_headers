@@ -2,7 +2,7 @@ import pickle
 import pandas as pd
 import sys
 import numpy as np
-from src.features.build_features import preprocessing, feature_gen
+import src.features.build_features
 
 import tensorflow as tf
 from sklearn.metrics import accuracy_score, precision_score, recall_score
@@ -48,11 +48,9 @@ from keras.wrappers.scikit_learn import KerasClassifier
 
 
 def preprocessing(filename):
-     try:
-        preprocessing(filename,"../../data/interim/preprocessed_pred_data.csv")
-        feature_gen('../../data/interim/preprocessed_pred_data.csv','../../data/feature_gen_pred_data.csv')
-     except:
-        print('Wrong file path provided, please provide the correct path to the csv')
+     src.features.build_features.preprocessing(filename,"../../data/interim/preprocessed_pred_data.csv")
+     src.features.build_features.feature_gen('../../data/interim/preprocessed_pred_data.csv','../../data/feature_gen_pred_data.csv')
+
 def supervised_models():
     test_dataset = pd.read_csv(r'../../data/feature_gen_pred_data.csv')
     #reading loaded model
@@ -102,8 +100,7 @@ def cnn_model():
 
 
 def main():
-    #filepath = input("Enter your filepath: ")
-    preprocessing(r"c:\Users\Parthav\Desktop\temp_data.csv")
+    preprocessing(sys.argv[0])
     supervised_models()
     rnn_model()
     cnn_model()
