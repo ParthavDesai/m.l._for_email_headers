@@ -1,5 +1,5 @@
 '''
-Authors: Parthav Desai, Josh Erviho, Daria Patroucheva, Annie Xu
+Authors: Parthav Desai, Josh Erviwo, Daria Patroucheva, Annie Xu
 '''
 import numpy as np
 import pandas as pd
