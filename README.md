@@ -17,9 +17,9 @@ From the root of the project run:
 
 `python3 src/data/make_dataset.py data/raw data/processed`
 
-`python3 src/data/build_features.py`
+`python3 src/models/build_features.py`
 
-`python3 src/data/train_model.py`
+`python3 src/models/train_model.py`
 
 Make predictions using a custom filepath, or either of the provided data/test/pred_test_spam.csv or data/test/pred_test_ham.csv emails:
 
