@@ -141,7 +141,7 @@ def gbt_model():
 Trains and Saves Recurrent Neural Network Model
 '''
 def rnn_model():
-    rnn_filepath = '../../models/rnn_model.pkl'
+    rnn_filepath = '../../models/rnn_model.h5'
     data_filepath = '../../data/interim/data_with_features.csv'
     rnn_scaler_path = '../../models/rnn_scaler.pkl'
     
@@ -191,12 +191,11 @@ def rnn_model():
     
     # train model
     print('Training RNN model...')
-    model = model.fit_generator(generator,epochs=50)
+    model.fit_generator(generator,epochs=2)
     # save scaler
     pickle.dump(feature_scaler, open(rnn_scaler_path, 'wb'))
     # save model
-    with open(rnn_filepath, 'wb') as model_file:
-        pickle.dump(model, model_file)
+    model.save(rnn_filepath)
     
     print(f'RNN model saved to {rnn_filepath}.')
 
@@ -271,13 +270,13 @@ def cnn_model():
     
 def main():
     print('Starting rfm model')
-    #rfm_model()
+    rfm_model()
     print('starting svc model')
-    #svc_model()
+    svc_model()
     print('starting gbt model')
-    #gbt_model()
+    gbt_model()
     print('starting rnn model')
-    #rnn_model()
+    rnn_model()
     print('starting cnn model')
     cnn_model()
 
