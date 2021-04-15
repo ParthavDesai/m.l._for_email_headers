@@ -191,7 +191,7 @@ def rnn_model():
     
     # train model
     print('Training RNN model...')
-    model.fit_generator(generator,epochs=2)
+    model.fit_generator(generator,epochs=50)
     # save scaler
     pickle.dump(feature_scaler, open(rnn_scaler_path, 'wb'))
     # save model
@@ -260,7 +260,7 @@ def cnn_model():
     
     # train model
     print('Training CNN model...')
-    model.fit_generator(generator,epochs=2)
+    model.fit_generator(generator,epochs=50)
     #save scaler
     pickle.dump(feature_scaler, open(cnn_scaler_path, 'wb'))
     # save model
