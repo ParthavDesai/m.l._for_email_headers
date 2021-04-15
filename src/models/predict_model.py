@@ -81,16 +81,19 @@ def supervised_models():
     print('gbt:'+gbt_prediction)
     
 def rnn_model():
-    rnn_filepath = '../../models/rnn_model.pickle'
+    rnn_filepath = '../../models/rnn_model.h5'
     rnn_scaler_filepath = '../../models/rnn_scaler.pkl'
     test_dataset = pd.read_csv(r'../../data/feature_gen_pred_data.csv')
     test_dataset = test_dataset.drop(['Label', 'new_email', 'domain', 'new_date', 'Return-Path','Message-ID','From','Reply-To','To','Submitting Host','Subject','Date','X-Mailer','MIME-Version','Content-Type','X-Priority','X-MSMail-Priority','Status','Content-Length','Content-Transfer-Encoding','Lines'], axis = 1)
     test_dataset = test_dataset.drop(test_dataset.filter(regex="Unname"),axis=1)
+    test_dataset = pd.DataFrame(np.repeat(test_dataset.values,32,axis=0))
     rnn_scaler = pickle.load(open(rnn_scaler_filepath,'rb'))
-    rnn_load_model = pickle.load(open(rnn_filepath, 'rb'))
+    rnn_load_model = tf.keras.models.load_model(rnn_filepath)
     test_scaled = rnn_scaler.transform(test_dataset)
-    prediction_value = rnn_load_model.predict(test_scaled)
-    print(prediction_value)
+    test_generator = TimeseriesGenerator(test_scaled, np.zeros(len(test_dataset)), length=25, batch_size=32)
+    prediction_val = rnn_load_model.predict(test_generator)
+    prediction_val = 1 if prediction_val[0][0] > 0.5 else 0
+    print('rnn: ' + str(prediction_val))
 
 def cnn_model():
     cnn_filepath = '../../models/cnn_model.h5'
@@ -98,19 +101,20 @@ def cnn_model():
     test_dataset = pd.read_csv(r'../../data/feature_gen_pred_data.csv')
     test_dataset = test_dataset.drop(['Label', 'new_email', 'domain', 'new_date', 'Return-Path','Message-ID','From','Reply-To','To','Submitting Host','Subject','Date','X-Mailer','MIME-Version','Content-Type','X-Priority','X-MSMail-Priority','Status','Content-Length','Content-Transfer-Encoding','Lines'], axis = 1)
     test_dataset = test_dataset.drop(test_dataset.filter(regex="Unname"),axis=1)
+    test_dataset = pd.DataFrame(np.repeat(test_dataset.values,32,axis=0))
     cnn_scaler = pickle.load(open(cnn_scaler_filepath,'rb'))
     cnn_load_model = tf.keras.models.load_model(cnn_filepath)
     test_scaled = cnn_scaler.transform(test_dataset)
-    test_generator = TimeseriesGenerator(test_scaled, np.zeros(len(test_dataset)), length=1, batch_size=32)
-    print(test_generator[0][0].shape)
+    test_generator = TimeseriesGenerator(test_scaled, np.zeros(len(test_dataset)), length=25, batch_size=32)
     prediction_val = cnn_load_model.predict(test_generator)
-    print(prediction_val)
+    prediction_val = 1 if prediction_val[0][0] > 0.5 else 0
+    print('cnn: ' + str(prediction_val))
 
 
 def main():
     preprocessing(sys.argv[1])
     supervised_models()
-    #rnn_model()
+    rnn_model()
     cnn_model()
 
 if __name__ == "__main__":
