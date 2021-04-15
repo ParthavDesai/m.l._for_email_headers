@@ -1,14 +1,31 @@
 M.L. For Email Headers
 ==============================
 
-Prerequisite
+Prerequisites
 ------------
 Dowload TREC07 Dataset here:
 https://plg.uwaterloo.ca/~gvcormac/treccorpus07/about.html
 
 Unpack and move to `data/raw`.
 
-Using machine learning to classify emails as spam or ham by looking at email headers.
+Running Project
+-------------
+
+From the root of the project run:
+
+`pip install -r requirements.txt`
+
+`python3 src/data/make_dataset.py data/raw data/processed`
+
+`python3 src/data/build_features.py`
+
+`python3 src/data/train_model.py`
+
+Make predictions using a custom filepath, or either of the provided data/test/pred_test_spam.csv or data/test/pred_test_ham.csv emails:
+
+`python3 src/data/predict_model.py <Your Path to Email CSV>`
+
+(Note: most data and models have already been generated and are included in the repository to reduce runtime.)
 
 Project Organization
 ------------
