@@ -27,7 +27,7 @@ def preprocessing(file_to_read,file_to_write):
     df['new_email'] = df['From'].str.extract(r'([\w\.-]+@[\w\.-]+)')
     df['domain'] = df['new_email'].apply(str).str.split('@').str[1]
     df = df[df['domain'].notna()]
-    df.to_csv(file_to_write)
+    df.to_csv(file_to_write, index=False)
 '''
     Methods for creating new features
 '''

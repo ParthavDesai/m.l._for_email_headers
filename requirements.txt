@@ -6,7 +6,9 @@ autocorrect==2.3.0
 awscli==1.19.3
 click==7.0
 coverage==5.4
+dill==0.3.3
 flake8==3.8.4
+h5py==2.10.0
 keras==2.4.3
 pandas==1.2.1
 python-dotenv>=0.5.1

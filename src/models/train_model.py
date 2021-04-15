@@ -1,7 +1,6 @@
 '''
 Authors: Parthav Desai, Josh Erviho, Daria Patroucheva, Annie Xu
 '''
-
 import numpy as np
 import pandas as pd
 from pathlib import Path
@@ -30,6 +29,7 @@ from collections import Counter
 from sklearn.svm import SVC
 
 #RNN Imports
+import dill
 import pickle
 import tensorflow as tf
 from sklearn.metrics import accuracy_score, precision_score, recall_score
@@ -192,11 +192,11 @@ def rnn_model():
     # train model
     print('Training RNN model...')
     model = model.fit_generator(generator,epochs=50)
-     #save scaler
+    # save scaler
     pickle.dump(feature_scaler, open(rnn_scaler_path, 'wb'))
     # save model
     with open(rnn_filepath, 'wb') as model_file:
-        pickle.dump(model.history, model_file)
+        pickle.dump(model, model_file)
     
     print(f'RNN model saved to {rnn_filepath}.')
 
@@ -205,14 +205,14 @@ Trains and Saves Convolutional Neural Network Model
 '''
 def cnn_model():
     
-    cnn_filepath = '../../models/cnn_model.pickle'
+    cnn_filepath = '../../models/cnn_model.h5'
     data_filepath = '../../data/interim/data_with_features.csv'
     cnn_scaler_path = '../../models/cnn_scaler.pkl'
     
     print('Preparing training data for CNN model...')
 
     cnn_df = pd.read_csv(data_filepath, dtype='unicode')
-    cnn_df = cnn_df.drop(['Return-Path','Message-ID','From','Reply-To','To','Submitting Host','Subject','Date','X-Mailer','MIME-Version','Content-Type','X-Priority','X-MSMail-Priority','Status','Content-Length','Content-Transfer-Encoding','Lines'], axis = 1)
+    cnn_df = cnn_df.drop(['new_email', 'domain', 'new_date', 'Return-Path','Message-ID','From','Reply-To','To','Submitting Host','Subject','Date','X-Mailer','MIME-Version','Content-Type','X-Priority','X-MSMail-Priority','Status','Content-Length','Content-Transfer-Encoding','Lines'], axis = 1)
 
     # split data into testing and training
     test_size = int(len(cnn_df) * 0.3)
@@ -260,25 +260,24 @@ def cnn_model():
     print(model.summary())
     
     # train model
-    print('Training RNN model...')
-    model = model.fit_generator(generator,epochs=50)
+    print('Training CNN model...')
+    model.fit_generator(generator,epochs=2)
     #save scaler
     pickle.dump(feature_scaler, open(cnn_scaler_path, 'wb'))
     # save model
-    with open(cnn_filepath, 'wb+') as model_file:
-        pickle.dump(model.history, model_file)
-    
+    model.save(cnn_filepath)
+
     print(f'CNN model saved to {cnn_filepath}.')
     
 def main():
     print('Starting rfm model')
-    rfm_model()
+    #rfm_model()
     print('starting svc model')
-    svc_model()
+    #svc_model()
     print('starting gbt model')
-    gbt_model()
+    #gbt_model()
     print('starting rnn model')
-    rnn_model()
+    #rnn_model()
     print('starting cnn model')
     cnn_model()
 
