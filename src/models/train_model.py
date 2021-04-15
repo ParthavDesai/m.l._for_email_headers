@@ -36,11 +36,18 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score
 from tensorflow.keras.layers import Activation, Dense, Dropout, LSTM
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.preprocessing.sequence import TimeseriesGenerator
+from keras.layers import Dense, Dropout, Activation, Input, BatchNormalization, MaxPooling1D, Bidirectional,LSTM
 
+
+#CNN Imports
+from keras.layers import Conv1D, GlobalMaxPooling1D, MaxPool1D, Flatten , Embedding, GlobalMaxPool1D
+from keras.models import Model
+from keras.wrappers.scikit_learn import KerasClassifier
 '''
     Generating results for Random forest Model
 '''
 def rfm_model():
+    rfm_filepath = '../../models/rfm_model.pickle'
     train = pd.read_csv(r'../../data/interim/data_with_features.csv',dtype='unicode')
 
     # training data without labels
@@ -56,6 +63,10 @@ def rfm_model():
 
     rf = RandomForestClassifier(n_estimators=50, max_depth=20, n_jobs=-1)
     rf_model = rf.fit(X_train, y_train)
+    # Save to file in the current working directory
+    
+    with open(rfm_filepath, 'wb') as file:
+        pickle.dump(rf_model, file)
     y_pred = rf_model.predict(X_test)
     precision, recall, fscore, support = score(y_test, y_pred, pos_label='1', average='binary')
     print(confusion_matrix(y_test, y_pred))
@@ -68,6 +79,7 @@ def rfm_model():
     Generating results for Support Vector Classifier Model
 '''
 def svc_model():
+    svc_filepath = '../../models/svc_model.pkl'
     train = pd.read_csv(r'../../data/interim/data_with_features.csv',dtype='unicode')
 
     # training data without labels
@@ -83,6 +95,9 @@ def svc_model():
     from sklearn.svm import SVC
     svclassifier = SVC()
     svclassifer_model = svclassifier.fit(X_train, y_train)
+    # Save to file in the current working directory
+    with open(svc_filepath, 'wb') as file:
+        pickle.dump(svc_model, file)
     y_pred = svclassifer_model.predict(X_test)
     precision, recall, fscore, support = score(y_test, y_pred, pos_label='1', average='binary')
     print(confusion_matrix(y_test, y_pred))
@@ -95,6 +110,7 @@ def svc_model():
 Generating results for Gradient Boosted Tree model
 '''
 def gbt_model():
+    gbt_filepath = '../../models/gbt_model.pickle'
     # original training data
     train = pd.read_csv(r'../../data/interim/data_with_features.csv',dtype='unicode')
 
@@ -109,6 +125,8 @@ def gbt_model():
     X_train, X_test, y_train, y_test = train_test_split(t, train['Label'], test_size=0.3)
     gbt = GradientBoostingClassifier(n_estimators=50, learning_rate = 0.2, max_depth=20, max_features=2)
     gbt_model = gbt.fit(X_train, y_train)
+    with open(gbt_filepath, 'wb') as file:
+        pickle.dump(gbt_model, file)
     y_pred = gbt_model.predict(X_test)
     precision, recall, fscore, support = score(y_test, y_pred, pos_label='1', average='binary')
     print(confusion_matrix(y_test, y_pred))
@@ -117,14 +135,15 @@ def gbt_model():
     print('Metric for Gradient Boosted Tree: Precision: {} | Recall: {} | Accuracy: {}'.format(round(precision, 3),
                                                         round(recall, 3),
                                                         round((y_pred==y_test).sum() / len(y_pred),3)))
+    
 
 '''
 Trains and Saves Recurrent Neural Network Model
 '''
 def rnn_model():
-    
-    rnn_filepath = '../../models/rnn_model.pickle'
+    rnn_filepath = '../../models/rnn_model.pkl'
     data_filepath = '../../data/interim/data_with_features.csv'
+    rnn_scaler_path = '../../models/rnn_scaler.pkl'
     
     print('Preparing training data for RNN model...')
 
@@ -173,9 +192,10 @@ def rnn_model():
     # train model
     print('Training RNN model...')
     model = model.fit_generator(generator,epochs=50)
-
+     #save scaler
+    pickle.dump(feature_scaler, open(rnn_scaler_path, 'wb'))
     # save model
-    with open(rnn_filepath, 'wb+') as model_file:
+    with open(rnn_filepath, 'wb') as model_file:
         pickle.dump(model.history, model_file)
     
     print(f'RNN model saved to {rnn_filepath}.')
@@ -187,6 +207,7 @@ def cnn_model():
     
     cnn_filepath = '../../models/cnn_model.pickle'
     data_filepath = '../../data/interim/data_with_features.csv'
+    cnn_scaler_path = '../../models/cnn_scaler.pkl'
     
     print('Preparing training data for CNN model...')
 
@@ -194,8 +215,8 @@ def cnn_model():
     cnn_df = cnn_df.drop(['Return-Path','Message-ID','From','Reply-To','To','Submitting Host','Subject','Date','X-Mailer','MIME-Version','Content-Type','X-Priority','X-MSMail-Priority','Status','Content-Length','Content-Transfer-Encoding','Lines'], axis = 1)
 
     # split data into testing and training
-    test_size = int(len(rnn_df) * 0.3)
-    train_data = rnn_df.iloc[:-test_size,:].copy()
+    test_size = int(len(cnn_df) * 0.3)
+    train_data = cnn_df.iloc[:-test_size,:].copy()
     test_data = cnn_df.iloc[-test_size:,:].copy()
     
     # split training data into labels and features
@@ -241,18 +262,24 @@ def cnn_model():
     # train model
     print('Training RNN model...')
     model = model.fit_generator(generator,epochs=50)
-
+    #save scaler
+    pickle.dump(feature_scaler, open(cnn_scaler_path, 'wb'))
     # save model
     with open(cnn_filepath, 'wb+') as model_file:
         pickle.dump(model.history, model_file)
     
     print(f'CNN model saved to {cnn_filepath}.')
-
+    
 def main():
+    print('Starting rfm model')
     rfm_model()
+    print('starting svc model')
     svc_model()
+    print('starting gbt model')
     gbt_model()
+    print('starting rnn model')
     rnn_model()
+    print('starting cnn model')
     cnn_model()
 
 if __name__ == "__main__":

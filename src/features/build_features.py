@@ -11,8 +11,8 @@ import checkdmarc
     Reading the raw data file trec07.csv, and preprocessing the data by getting rid of null values and replacing True,False with 0 and 1 and unknown for some columns
     as well as getting rid of duplicate data
 '''
-def preprocessing():
-    df = pd.read_csv(r'../../data/interim/trec07.csv',dtype='unicode')
+def preprocessing(file_to_read,file_to_write):
+    df = pd.read_csv(file_to_read,dtype='unicode')
     cols_for_unknown = ['Return-Path','Message-ID',"From","Reply-To","To","Subject","Date","X-Mailer","Content-Type","Content-Transfer-Encoding"]
     cols_for_zero = ["MIME-Version","X-Priority","X-MSMail-Priority","Status","Content-Length","Lines"]
 
@@ -26,8 +26,8 @@ def preprocessing():
     df = df.replace("re :","",regex = True)
     df['new_email'] = df['From'].str.extract(r'([\w\.-]+@[\w\.-]+)')
     df['domain'] = df['new_email'].apply(str).str.split('@').str[1]
-    
-    df.to_csv(r'../../data/interim/preprocessed.csv')
+    df = df[df['domain'].notna()]
+    df.to_csv(file_to_write)
 '''
     Methods for creating new features
 '''
@@ -165,8 +165,8 @@ def check_blackListed(domain):
     
 
 
-def feature_gen():
-    df = pd.read_csv(r'../data/interim/preprocessed.csv',dtype='unicode')
+def feature_gen(file_to_read,file_to_write):
+    df = pd.read_csv(file_to_read,dtype='unicode')
     df['special_characters_exists_subject'] = df['Subject'].apply(if_special)
     df['number_of_words_subject'] = df['Subject'].apply(count_num_words)
     df['number_of_capitalized_words_subject'] = df['Subject'].apply(count_num_cap_words)
@@ -190,14 +190,14 @@ def feature_gen():
     df['new_date'] = pd.to_datetime(df['Date'],errors="coerce")
     df['validate_date'] = np.where(df['new_date']< datetime.now(), 1, 0)
     df['Subject_length']  = df['Subject'].str.len()
-    df.to_csv(r'../../data/interim/data_with_features.csv',index=False)
+    df.to_csv(file_to_write,index=False)
 
 def main():
     print('Starting Preprocessing')
-    preprocessing()
+    preprocessing('../../data/interim/trec07.csv','../../data/interim/preprocessed.csv')
     print('Preprocessing Done!')
     print('Starting Feature Gen')
-    feature_gen()
+    feature_gen('../../data/interim/preprocessed.csv','../../data/interim/data_with_features.csv')
     print('Done Feature Gen')
 
 if __name__ == "__main__":
