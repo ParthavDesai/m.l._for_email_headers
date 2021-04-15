@@ -17,7 +17,7 @@ From the root of the project run:
 
 `python3 src/data/make_dataset.py data/raw data/processed`
 
-`python3 src/models/build_features.py`
+`python3 src/features/build_features.py`
 
 `python3 src/models/train_model.py`
 
