@@ -194,10 +194,10 @@ def feature_gen(file_to_read,file_to_write):
 
 def main():
     print('Starting Preprocessing')
-    preprocessing('../../data/interim/trec07.csv','../../data/interim/preprocessed.csv')
+    preprocessing('data/interim/trec07.csv','data/interim/preprocessed.csv')
     print('Preprocessing Done!')
     print('Starting Feature Gen')
-    feature_gen('../../data/interim/preprocessed.csv','../../data/interim/data_with_features.csv')
+    feature_gen('data/interim/preprocessed.csv','data/interim/data_with_features.csv')
     print('Done Feature Gen')
 
 if __name__ == "__main__":

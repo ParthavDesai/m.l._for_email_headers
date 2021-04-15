@@ -46,11 +46,11 @@ from keras.wrappers.scikit_learn import KerasClassifier
     Generating results for Random forest Model
 '''
 def rfm_model():
-    rfm_filepath = '../../models/rfm_model.pickle'
-    train = pd.read_csv(r'../../data/interim/data_with_features.csv',dtype='unicode')
+    rfm_filepath = 'models/rfm_model.pickle'
+    train = pd.read_csv(r'data/interim/data_with_features.csv',dtype='unicode')
 
     # training data without labels
-    t = pd.read_csv(r'../../data/interim/data_with_features.csv',dtype='unicode')
+    t = pd.read_csv(r'data/interim/data_with_features.csv',dtype='unicode')
     labels = np.array(t['Label'])
     t = t.drop(['Submitting Host','Label','Return-Path','Message-ID','From','Reply-To','To','Subject','Date','X-Mailer','MIME-Version','Content-Type','X-Priority','X-MSMail-Priority','Status','Content-Length','Content-Transfer-Encoding','Lines','new_email','domain','new_date'], axis = 1)
 
@@ -78,11 +78,11 @@ def rfm_model():
     Generating results for Support Vector Classifier Model
 '''
 def svc_model():
-    svc_filepath = '../../models/svc_model.pkl'
-    train = pd.read_csv(r'../../data/interim/data_with_features.csv',dtype='unicode')
+    svc_filepath = 'models/svc_model.pkl'
+    train = pd.read_csv(r'data/interim/data_with_features.csv',dtype='unicode')
 
     # training data without labels
-    t = pd.read_csv(r'../../data/interim/data_with_features.csv',dtype='unicode')
+    t = pd.read_csv(r'data/interim/data_with_features.csv',dtype='unicode')
     labels = np.array(t['Label'])
     t = t.drop(['Submitting Host','Label','Return-Path','Message-ID','From','Reply-To','To','Subject','Date','X-Mailer','MIME-Version','Content-Type','X-Priority','X-MSMail-Priority','Status','Content-Length','Content-Transfer-Encoding','Lines','new_email','domain','new_date'], axis = 1)
 
@@ -109,12 +109,12 @@ def svc_model():
 Generating results for Gradient Boosted Tree model
 '''
 def gbt_model():
-    gbt_filepath = '../../models/gbt_model.pickle'
+    gbt_filepath = 'models/gbt_model.pickle'
     # original training data
-    train = pd.read_csv(r'../../data/interim/data_with_features.csv',dtype='unicode')
+    train = pd.read_csv(r'data/interim/data_with_features.csv',dtype='unicode')
 
     # training data without labels
-    t = pd.read_csv(r'../../data/interim/data_with_features.csv',dtype='unicode')
+    t = pd.read_csv(r'data/interim/data_with_features.csv',dtype='unicode')
     labels = np.array(t['Label'])
     t = t.drop(['Submitting Host','Label','Return-Path','Message-ID','From','Reply-To','To','Subject','Date','X-Mailer','MIME-Version','Content-Type','X-Priority','X-MSMail-Priority','Status','Content-Length','Content-Transfer-Encoding','Lines','new_email','domain','new_date'], axis = 1)
 
@@ -140,9 +140,9 @@ def gbt_model():
 Trains and Saves Recurrent Neural Network Model
 '''
 def rnn_model():
-    rnn_filepath = '../../models/rnn_model.h5'
-    data_filepath = '../../data/interim/data_with_features.csv'
-    rnn_scaler_path = '../../models/rnn_scaler.pkl'
+    rnn_filepath = 'models/rnn_model.h5'
+    data_filepath = 'data/interim/data_with_features.csv'
+    rnn_scaler_path = 'models/rnn_scaler.pkl'
     
     print('Preparing training data for RNN model...')
 
@@ -203,9 +203,9 @@ Trains and Saves Convolutional Neural Network Model
 '''
 def cnn_model():
     
-    cnn_filepath = '../../models/cnn_model.h5'
-    data_filepath = '../../data/interim/data_with_features.csv'
-    cnn_scaler_path = '../../models/cnn_scaler.pkl'
+    cnn_filepath = 'models/cnn_model.h5'
+    data_filepath = 'data/interim/data_with_features.csv'
+    cnn_scaler_path = 'models/cnn_scaler.pkl'
     
     print('Preparing training data for CNN model...')
 

@@ -52,15 +52,15 @@ def preprocessing(filename):
      df = pd.read_csv(filename)
      df['Label'] = None
      df.to_csv(filename)
-     src.features.build_features.preprocessing(filename,"../../data/interim/preprocessed_pred_data.csv")
-     src.features.build_features.feature_gen('../../data/interim/preprocessed_pred_data.csv','../../data/interim/feature_gen_pred_data.csv')
+     src.features.build_features.preprocessing(filename,"data/interim/preprocessed_pred_data.csv")
+     src.features.build_features.feature_gen('data/interim/preprocessed_pred_data.csv','data/interim/feature_gen_pred_data.csv')
 
 def supervised_models():
-    test_dataset = pd.read_csv(r'../../data/interim/feature_gen_pred_data.csv')
+    test_dataset = pd.read_csv(r'data/interim/feature_gen_pred_data.csv')
     #reading loaded model
-    rfm_filepath = '../../models/rfm_model.pickle'
-    svc_filepath = '../../models/svc_model.pickle'
-    gbt_filepath = '../../models/gbt_model.pickle'
+    rfm_filepath = 'models/rfm_model.pickle'
+    svc_filepath = 'models/svc_model.pickle'
+    gbt_filepath = 'models/gbt_model.pickle'
     
     test_dataset = test_dataset.drop(['Label', 'new_email', 'domain', 'new_date', 'Return-Path','Message-ID','From','Reply-To','To','Submitting Host','Subject','Date','X-Mailer','MIME-Version','Content-Type','X-Priority','X-MSMail-Priority','Status','Content-Length','Content-Transfer-Encoding','Lines'], axis = 1)
     test_dataset = test_dataset.drop(test_dataset.filter(regex="Unname"),axis=1)
@@ -81,9 +81,9 @@ def supervised_models():
     print('gbt:'+gbt_prediction)
     
 def rnn_model():
-    rnn_filepath = '../../models/rnn_model.h5'
-    rnn_scaler_filepath = '../../models/rnn_scaler.pkl'
-    test_dataset = pd.read_csv(r'../../data/interim/feature_gen_pred_data.csv')
+    rnn_filepath = 'models/rnn_model.h5'
+    rnn_scaler_filepath = 'models/rnn_scaler.pkl'
+    test_dataset = pd.read_csv(r'data/interim/feature_gen_pred_data.csv')
     test_dataset = test_dataset.drop(['Label', 'new_email', 'domain', 'new_date', 'Return-Path','Message-ID','From','Reply-To','To','Submitting Host','Subject','Date','X-Mailer','MIME-Version','Content-Type','X-Priority','X-MSMail-Priority','Status','Content-Length','Content-Transfer-Encoding','Lines'], axis = 1)
     test_dataset = test_dataset.drop(test_dataset.filter(regex="Unname"),axis=1)
     test_dataset = pd.DataFrame(np.repeat(test_dataset.values,32,axis=0))
@@ -96,9 +96,9 @@ def rnn_model():
     print('rnn: ' + str(prediction_val))
 
 def cnn_model():
-    cnn_filepath = '../../models/cnn_model.h5'
-    cnn_scaler_filepath = '../../models/cnn_scaler.pkl'
-    test_dataset = pd.read_csv(r'../../data/interim/feature_gen_pred_data.csv')
+    cnn_filepath = 'models/cnn_model.h5'
+    cnn_scaler_filepath = 'models/cnn_scaler.pkl'
+    test_dataset = pd.read_csv(r'data/interim/feature_gen_pred_data.csv')
     test_dataset = test_dataset.drop(['Label', 'new_email', 'domain', 'new_date', 'Return-Path','Message-ID','From','Reply-To','To','Submitting Host','Subject','Date','X-Mailer','MIME-Version','Content-Type','X-Priority','X-MSMail-Priority','Status','Content-Length','Content-Transfer-Encoding','Lines'], axis = 1)
     test_dataset = test_dataset.drop(test_dataset.filter(regex="Unname"),axis=1)
     test_dataset = pd.DataFrame(np.repeat(test_dataset.values,32,axis=0))
