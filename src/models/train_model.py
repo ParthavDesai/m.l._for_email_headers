@@ -29,7 +29,6 @@ from collections import Counter
 from sklearn.svm import SVC
 
 #RNN Imports
-import dill
 import pickle
 import tensorflow as tf
 from sklearn.metrics import accuracy_score, precision_score, recall_score
