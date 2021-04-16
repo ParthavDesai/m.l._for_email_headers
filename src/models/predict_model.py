@@ -65,7 +65,6 @@ def supervised_models():
     test_dataset = test_dataset.drop(['Label', 'new_email', 'domain', 'new_date', 'Return-Path','Message-ID','From','Reply-To','To','Submitting Host','Subject','Date','X-Mailer','MIME-Version','Content-Type','X-Priority','X-MSMail-Priority','Status','Content-Length','Content-Transfer-Encoding','Lines'], axis = 1)
     test_dataset = test_dataset.drop(test_dataset.filter(regex="Unname"),axis=1)
     feature_list = list(test_dataset.columns)
-    print(feature_list)
     features = np.array(test_dataset)
     features = np.nan_to_num(features)
     rfm_load_model = pickle.load(open(rfm_filepath, 'rb')) 
