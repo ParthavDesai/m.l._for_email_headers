@@ -21,9 +21,9 @@ From the root of the project run:
 
 `python3 src/models/train_model.py`
 
-Make predictions using a custom filepath, or either of the provided data/test/pred_test_spam.csv or data/test/pred_test_ham.csv emails:
+Make predictions using a custom filepath, or either of the provided `data/test/pred_test_spam.csv` or `data/test/pred_test_ham.csv` emails:
 
-`python3 src/data/predict_model.py <Your Path to Email CSV>`
+`python3 src/models/predict_model.py <Your Path to Email CSV>`
 
 (Note: most data and models have already been generated and are included in the repository to reduce runtime.)
 
